@@ -46,4 +46,6 @@ $$
 - [[forward-process]]
 - [[noise-prediction]]
 - [[sampling-steps]]
+- [[ddpm-vs-ddim]]
+- [[ddim]]
 - [[timeline]]

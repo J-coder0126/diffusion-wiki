@@ -6,3 +6,7 @@
 ## 2026-11-18 ingest: DDPM
 - 新增：papers/ddpm、concepts/forward-process、concepts/noise-prediction、concepts/sampling-steps
 - 更新：timeline、index
+
+## 2026-11-18 ingest: DDIM
+- 新增：papers/ddim、comparisons/ddpm-vs-ddim
+- 更新：concepts/sampling-steps（加入 DDIM 加速與 ⚠ 說法不一）、papers/ddpm（加回比較頁連結）、timeline、index

@@ -38,7 +38,12 @@ for (const [name, file] of pages) {
     if (!PAPERS.includes(m[1])) problems.push(`未知的論文代號  ${rel(file)}：[${m[1]} …]`);
   }
 
-  const isContent = /[\\/](papers|concepts|comparisons)[\\/]/.test(file);
+  // 格式錯誤的出處，例如 [DDIM Abstract]、[DDPM 3.2]
+  for (const m of text.matchAll(/\[(DDPM|DDIM|LDM|CFG|DiT) ([^\]]*)\]/g)) {
+    if (!CITE.test(m[0])) problems.push(`出處格式錯誤  ${rel(file)}：${m[0]}（應為 §章節／App.／Tab.／Fig.／Eq.）`);
+  }
+
+  const isContent =/[\\/](papers|concepts|comparisons)[\\/]/.test(file);
   if (!isContent) continue;
 
   // front matter
