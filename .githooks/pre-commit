@@ -1,0 +1,3 @@
+#!/bin/sh
+# AGENTS.md 第 8 節：lint 沒過不可 commit
+node scripts/lint.js || { echo "lint 未通過，已阻擋 commit"; exit 1; }
