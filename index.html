@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>擴散模型 LLM Wiki</title>
+<style>
+:root{--bg:#f6f4ee;--paper:#fffdf8;--ink:#1d2330;--muted:#5d6675;--line:#e4dfd3;--accent:#c2572b;--accent2:#2f5bd3}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#121418;--paper:#1b1e24;--ink:#e8eaee;--muted:#9aa3b0;--line:#2c313a;--accent:#f08a5d;--accent2:#86a8ff}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","Microsoft JhengHei","PingFang TC",system-ui,sans-serif;line-height:1.7}
+main{max-width:860px;margin:0 auto;padding:40px 16px 64px}
+h1{font-size:2rem;margin:0 0 .3em}
+.lead{color:var(--muted);margin:0 0 28px}
+.hero{display:block;background:var(--paper);border:1px solid var(--line);border-left:5px solid var(--accent);border-radius:16px;padding:22px 24px;color:var(--ink);text-decoration:none;margin-bottom:32px}
+.hero:hover{border-color:var(--accent)}
+.hero b{font-size:1.3rem}.hero span{display:block;color:var(--muted);font-size:.95rem}
+h2{font-size:1.15rem;margin:28px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.grid a{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:10px 14px;color:var(--ink);text-decoration:none;font-size:.95rem}
+.grid a:hover{border-color:var(--accent2)}
+.grid small{display:block;color:var(--muted);font-size:.8rem}
+footer{margin-top:40px;color:var(--muted);font-size:.85rem}
+footer a{color:var(--accent2)}
+</style>
+</head>
+<body>
+<main>
+  <h1>擴散模型 LLM Wiki</h1>
+  <p class="lead">以 5 篇論文（DDPM、DDIM、LDM、CFG、DiT）建立的知識庫，每個事實都附論文章節出處；教學簡報只使用 Wiki 的內容產生。</p>
+
+  <a class="hero" href="output/what-is-diffusion/deck.html"><b>▶ 教學簡報：擴散模型是什麼？</b><span>8 頁 · 每個重點都連回 Wiki 頁面 · 用 ← → 翻頁</span></a>
+
+  <h2>論文頁</h2>
+  <div class="grid" id="papers"></div>
+  <h2>概念頁</h2>
+  <div class="grid" id="concepts"></div>
+  <h2>比較頁與時間軸</h2>
+  <div class="grid" id="comparisons"></div>
+
+  <footer>
+    規則：<a href="https://github.com/J-coder0126/diffusion-wiki/blob/main/AGENTS.md">AGENTS.md</a> ·
+    流程：<a href="https://github.com/J-coder0126/diffusion-wiki/blob/main/workflows/slides.md">workflows/slides.md</a> ·
+    檢查紀錄：<a href="https://github.com/J-coder0126/diffusion-wiki/blob/main/docs/02-執行紀錄.md">docs/02-執行紀錄.md</a>
+  </footer>
+</main>
+<script>
+const R = "https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/";
+const groups = {
+  papers: [["papers/ddpm","DDPM（2020）","預測雜訊的擴散模型"],["papers/ddim","DDIM（2020）","少步數確定性取樣"],["papers/ldm","LDM（2022）","潛在空間擴散"],["papers/cfg","CFG（2022）","無分類器引導"],["papers/dit","DiT（2023）","Transformer 骨幹"]],
+  concepts: [["concepts/forward-process","前向過程","把圖變成雜訊"],["concepts/noise-prediction","預測雜訊","訓練目標 L_simple"],["concepts/sampling-steps","取樣步數","生成速度瓶頸"],["concepts/latent-diffusion","潛在擴散","先壓縮再擴散"],["concepts/conditioning","條件生成","交叉注意力"],["concepts/guidance","引導","多樣性換品質"],["concepts/denoising-backbone","去噪網路骨幹","U-Net 到 Transformer"]],
+  comparisons: [["comparisons/ddpm-vs-ddim","DDPM vs DDIM","兩種取樣方式"],["comparisons/classifier-guidance-vs-cfg","分類器引導 vs CFG","兩種引導"],["comparisons/unet-vs-dit","U-Net vs DiT","兩種骨幹"],["timeline","時間軸","發展脈絡"],["index","Wiki 目錄","全部頁面"],["log","紀錄","ingest 歷程"]]
+};
+for (const [id, items] of Object.entries(groups))
+  document.getElementById(id).innerHTML = items.map(([p,t,d]) => `<a href="${R}${p}.md">${t}<small>${d}</small></a>`).join("");
+</script>
+</body>
+</html>

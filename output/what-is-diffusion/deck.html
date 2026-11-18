@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>擴散模型是什麼？</title>
+<style>
+:root{--bg:#f6f4ee;--paper:#fffdf8;--ink:#1d2330;--muted:#5d6675;--line:#e4dfd3;--accent:#c2572b;--accent2:#2f5bd3;--soft:#fbeee6;--chip:#eef2fc}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#121418;--paper:#1b1e24;--ink:#e8eaee;--muted:#9aa3b0;--line:#2c313a;--accent:#f08a5d;--accent2:#86a8ff;--soft:#2a211c;--chip:#222a3d}}
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","Microsoft JhengHei","PingFang TC",system-ui,sans-serif}
+.deck{height:100%;display:grid;place-items:center;padding:16px}
+.slide{display:none;width:min(100%,1100px);aspect-ratio:16/9;max-height:calc(100vh - 80px);background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:clamp(18px,3.2vw,44px) clamp(20px,4vw,56px);flex-direction:column;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.06)}
+.slide.on{display:flex}
+.slide header .kicker{font-size:.8rem;letter-spacing:.12em;color:var(--accent);font-weight:700}
+.slide h2{margin:.25em 0 .5em;font-size:clamp(1.3rem,2.9vw,2.3rem);line-height:1.25}
+.body{flex:1;display:flex;flex-direction:column;gap:.7em;min-height:0}
+.points{margin:0;padding:0;list-style:none;display:grid;gap:.55em}
+.points li{font-size:clamp(.95rem,1.75vw,1.3rem);line-height:1.55;padding-left:1.1em;position:relative}
+.points li::before{content:"";position:absolute;left:0;top:.62em;width:.45em;height:.45em;border-radius:50%;background:var(--accent)}
+.src{display:inline-block;margin-left:.4em;font-size:.62em;vertical-align:middle;padding:.1em .55em;border-radius:99px;background:var(--chip);color:var(--accent2);text-decoration:none;font-family:ui-monospace,Consolas,monospace}
+.src:hover{text-decoration:underline}
+.formula{font-family:"Cambria Math","Times New Roman",serif;font-size:clamp(1rem,2vw,1.45rem);background:var(--soft);border-radius:12px;padding:.55em .9em;text-align:center;overflow-x:auto;white-space:nowrap}
+.plain{margin:0;font-size:clamp(.9rem,1.6vw,1.15rem);color:var(--muted)}
+.plain b{color:var(--accent);margin-right:.5em}
+footer{border-top:1px solid var(--line);padding-top:.5em;margin-top:.6em;font-size:.75rem;color:var(--muted)}
+.vis-noise{display:flex;align-items:center;justify-content:center;gap:.5em;flex-wrap:wrap;margin-top:auto}
+.nz{display:flex;flex-direction:column;align-items:center;gap:.25em;font-size:.85rem;color:var(--muted)}
+.nz-img{width:clamp(44px,7vw,84px);aspect-ratio:1;border-radius:10px;background:radial-gradient(circle at 35% 40%,#f4b860 0 18%,transparent 19%),radial-gradient(circle at 62% 62%,#5b8def 0 22%,transparent 23%),linear-gradient(135deg,#9fd5b6,#e9c9a8);position:relative;overflow:hidden}
+.nz-img::after{content:"";position:absolute;inset:0;opacity:var(--n);background:repeating-conic-gradient(#000 0 8%,#fff 0 16%,#888 0 25%) 0 0/7px 7px;filter:contrast(1.2)}
+.nz-arrow{color:var(--muted);font-size:1.2rem}
+.nz-caption{width:100%;display:flex;justify-content:space-between;font-size:.8rem;color:var(--accent);max-width:560px}
+.vis-pipe{display:flex;align-items:center;justify-content:center;gap:.4em;flex-wrap:wrap;margin-top:auto}
+.pp{border:1px solid var(--line);border-radius:12px;padding:.5em .8em;font-size:clamp(.8rem,1.4vw,1rem);background:var(--paper);text-align:center}
+.pp.enc{background:var(--chip)}.pp.lat{background:var(--soft);border-color:var(--accent);font-weight:700}.pp small{font-weight:400;color:var(--muted)}
+.pa{color:var(--muted)}
+.vis-timeline{display:flex;justify-content:space-between;position:relative;margin-top:auto;padding:0 2%}
+.vis-timeline::before{content:"";position:absolute;left:2%;right:2%;top:2.05em;height:2px;background:var(--line)}
+.tl-item{display:flex;flex-direction:column;align-items:center;gap:.3em;position:relative;z-index:1}
+.tl-year{font-size:.8rem;color:var(--muted)}.tl-dot{width:14px;height:14px;border-radius:50%;background:var(--accent);border:3px solid var(--paper)}
+.tl-name{font-weight:700;font-size:clamp(.8rem,1.5vw,1.05rem)}
+nav.ctl{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:8px;align-items:center;font-size:.85rem;color:var(--muted)}
+nav.ctl button{font:inherit;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:99px;padding:4px 14px;cursor:pointer}
+@media (max-width:640px){.slide{aspect-ratio:auto;max-height:none;min-height:70vh}}
+@media print{nav.ctl{display:none}.slide{display:flex!important;page-break-after:always;box-shadow:none}}
+</style></head>
+<body><main class="deck">
+<section class="slide" data-n="1">
+  <header><span class="kicker">01 / 08</span><h2>擴散模型是什麼？</h2></header>
+  <div class="body has-vis">
+    <ul class="points"><li><span>先把圖片逐步加噪成純雜訊，再訓練網路一步步把雜訊去掉。</span><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/papers/ddpm.md" target="_blank" rel="noopener">ddpm</a></li><li><span>2020 年 DDPM 首次證明擴散模型能生成高品質圖片。</span><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/timeline.md" target="_blank" rel="noopener">timeline</a></li><li><span>後續改進：DDIM 少步數確定性取樣、LDM 在潛在空間做擴散。</span><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/timeline.md" target="_blank" rel="noopener">timeline</a></li><li><span>CFG 不需分類器的引導、DiT 以 Transformer 取代 U-Net。</span><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/timeline.md" target="_blank" rel="noopener">timeline</a></li></ul>
+    
+    
+    <div class="vis-timeline"><div class="tl-item"><div class="tl-year">2020</div><div class="tl-dot"></div><div class="tl-name">DDPM</div></div><div class="tl-item"><div class="tl-year">2020</div><div class="tl-dot"></div><div class="tl-name">DDIM</div></div><div class="tl-item"><div class="tl-year">2022</div><div class="tl-dot"></div><div class="tl-name">LDM</div></div><div class="tl-item"><div class="tl-year">2022</div><div class="tl-dot"></div><div class="tl-name">CFG</div></div><div class="tl-item"><div class="tl-year">2023</div><div class="tl-dot"></div><div class="tl-name">DIT</div></div></div>
+  </div>
+  <footer>出處（wiki 頁面）：<a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/papers/ddpm.md" target="_blank" rel="noopener">ddpm</a><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/timeline.md" target="_blank" rel="noopener">timeline</a></footer>
+</section>
+<section class="slide" data-n="2">
+  <header><span class="kicker">02 / 08</span><h2>前向過程：把圖變成雜訊</h2></header>
+  <div class="body has-vis">
+    <ul class="points"><li><span>把真實圖片一步步加入高斯雜訊，直到變成純雜訊。</span><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/forward-process.md" target="_blank" rel="noopener">forward-process</a></li><li><span>這個流程是固定的，完全沒有需要學習的參數。</span><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/forward-process.md" target="_blank" rel="noopener">forward-process</a></li><li><span>任一步 x_t 都能由原圖一次算出，訓練時可隨機挑時間步。</span><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/forward-process.md" target="_blank" rel="noopener">forward-process</a></li><li><span>DDPM 共 T = 1000 步，β 從 10⁻⁴ 線性增加到 0.02。</span><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/forward-process.md" target="_blank" rel="noopener">forward-process</a></li></ul>
+    <div class="formula">x_t = √ᾱ_t · x₀ + √(1 − ᾱ_t) · ε</div>
+    <p class="plain"><b>白話</b>第 t 步的圖就是原圖和雜訊按比例混合，t 越大雜訊越多。<a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/forward-process.md" target="_blank" rel="noopener">forward-process</a></p>
+    <div class="vis-noise" aria-hidden="true"><div class="nz"><div class="nz-img" style="--n:0"></div><span>x₀</span></div><div class="nz-arrow">→</div><div class="nz"><div class="nz-img" style="--n:0.25"></div><span>x₁</span></div><div class="nz-arrow">→</div><div class="nz"><div class="nz-img" style="--n:0.5"></div><span>…</span></div><div class="nz-arrow">→</div><div class="nz"><div class="nz-img" style="--n:0.75"></div><span>x_t</span></div><div class="nz-arrow">→</div><div class="nz"><div class="nz-img" style="--n:1"></div><span>x_T</span></div>
+    <div class="nz-caption"><span>前向：加噪 →</span><span>← 反向：去噪</span></div></div>
+  </div>
+  <footer>出處（wiki 頁面）：<a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/forward-process.md" target="_blank" rel="noopener">forward-process</a></footer>
+</section>
+<section class="slide" data-n="3">
+  <header><span class="kicker">03 / 08</span><h2>網路學什麼？猜雜訊</h2></header>
+  <div class="body">
+    <ul class="points"><li><span>給網路一張加噪圖和時間步，要它猜出當初加入的雜訊 ε。</span><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/noise-prediction.md" target="_blank" rel="noopener">noise-prediction</a></li><li><span>也能改猜平均值或原圖，但 DDPM 發現猜雜訊的樣本品質最好。</span><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/noise-prediction.md" target="_blank" rel="noopener">noise-prediction</a></li><li><span>實際的訓練目標 L_simple 只是一個均方誤差。</span><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/noise-prediction.md" target="_blank" rel="noopener">noise-prediction</a></li><li><span>LDM 沿用同一個目標，只是改在潛在表示 z 上猜。</span><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/noise-prediction.md" target="_blank" rel="noopener">noise-prediction</a></li></ul>
+    <div class="formula">L_simple = E[ ‖ε − ε_θ(x_t, t)‖² ]</div>
+    <p class="plain"><b>白話</b>網路猜的雜訊和真正加入的雜訊越接近越好。<a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/noise-prediction.md" target="_blank" rel="noopener">noise-prediction</a></p>
+    
+  </div>
+  <footer>出處（wiki 頁面）：<a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/noise-prediction.md" target="_blank" rel="noopener">noise-prediction</a></footer>
+</section>
+<section class="slide" data-n="4">
+  <header><span class="kicker">04 / 08</span><h2>反向過程：從雜訊生成圖片</h2></header>
+  <div class="body has-vis">
+    <ul class="points"><li><span>從純雜訊出發，每一步預測雜訊並往回走一步，直到得到圖片。</span><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/sampling-steps.md" target="_blank" rel="noopener">sampling-steps</a></li><li><span>DDPM 在無條件 CIFAR10 達到 FID 3.17，是當時最佳的 FID。</span><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/papers/ddpm.md" target="_blank" rel="noopener">ddpm</a></li><li><span>代價：生成要跑完 1000 步，每一步都要算一次網路。</span><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/papers/ddpm.md" target="_blank" rel="noopener">ddpm</a></li></ul>
+    
+    
+    <div class="vis-noise" aria-hidden="true"><div class="nz"><div class="nz-img" style="--n:0"></div><span>x₀</span></div><div class="nz-arrow">→</div><div class="nz"><div class="nz-img" style="--n:0.25"></div><span>x₁</span></div><div class="nz-arrow">→</div><div class="nz"><div class="nz-img" style="--n:0.5"></div><span>…</span></div><div class="nz-arrow">→</div><div class="nz"><div class="nz-img" style="--n:0.75"></div><span>x_t</span></div><div class="nz-arrow">→</div><div class="nz"><div class="nz-img" style="--n:1"></div><span>x_T</span></div>
+    <div class="nz-caption"><span>前向：加噪 →</span><span>← 反向：去噪</span></div></div>
+  </div>
+  <footer>出處（wiki 頁面）：<a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/sampling-steps.md" target="_blank" rel="noopener">sampling-steps</a><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/papers/ddpm.md" target="_blank" rel="noopener">ddpm</a></footer>
+</section>
+<section class="slide" data-n="5">
+  <header><span class="kicker">05 / 08</span><h2>太慢怎麼辦？DDIM</h2></header>
+  <div class="body">
+    <ul class="points"><li><span>DDIM 沿用訓練好的 DDPM 模型，不必重新訓練，只改取樣方式。</span><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/comparisons/ddpm-vs-ddim.md" target="_blank" rel="noopener">ddpm-vs-ddim</a></li><li><span>生成過程不加隨機雜訊，結果是確定的。</span><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/comparisons/ddpm-vs-ddim.md" target="_blank" rel="noopener">ddpm-vs-ddim</a></li><li><span>20–100 步就能接近 1000 步的品質，加速 10–50 倍。</span><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/sampling-steps.md" target="_blank" rel="noopener">sampling-steps</a></li><li><span>同一個 x_T 重新生成，高層特徵一致，還能做語意內插。</span><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/comparisons/ddpm-vs-ddim.md" target="_blank" rel="noopener">ddpm-vs-ddim</a></li></ul>
+    
+    
+    
+  </div>
+  <footer>出處（wiki 頁面）：<a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/comparisons/ddpm-vs-ddim.md" target="_blank" rel="noopener">ddpm-vs-ddim</a><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/sampling-steps.md" target="_blank" rel="noopener">sampling-steps</a></footer>
+</section>
+<section class="slide" data-n="6">
+  <header><span class="kicker">06 / 08</span><h2>省算力：潛在擴散</h2></header>
+  <div class="body has-vis">
+    <ul class="points"><li><span>像素空間的擴散很貴，算力多花在人眼看不出的細節上。</span><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/latent-diffusion.md" target="_blank" rel="noopener">latent-diffusion</a></li><li><span>做法：編碼器先把圖壓成小的潛在表示 z，擴散只在 z 上做。</span><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/latent-diffusion.md" target="_blank" rel="noopener">latent-diffusion</a></li><li><span>壓縮倍率要適中，f = 4–16 效果較好。</span><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/latent-diffusion.md" target="_blank" rel="noopener">latent-diffusion</a></li><li><span>DiT 沿用 Stable Diffusion 的 VAE，256×256 的圖變成 32×32×4。</span><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/latent-diffusion.md" target="_blank" rel="noopener">latent-diffusion</a></li></ul>
+    
+    
+    <div class="vis-pipe" aria-hidden="true">
+    <div class="pp">圖片 x</div><div class="pa">→</div><div class="pp enc">編碼器 E</div><div class="pa">→</div>
+    <div class="pp lat">潛在 z<br><small>在這裡加噪／去噪</small></div><div class="pa">→</div><div class="pp enc">解碼器 D</div><div class="pa">→</div><div class="pp">圖片</div></div>
+  </div>
+  <footer>出處（wiki 頁面）：<a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/latent-diffusion.md" target="_blank" rel="noopener">latent-diffusion</a></footer>
+</section>
+<section class="slide" data-n="7">
+  <header><span class="kicker">07 / 08</span><h2>讓文字控制畫面</h2></header>
+  <div class="body">
+    <ul class="points"><li><span>條件生成：讓去噪網路多吃一個條件 y，例如文字或類別。</span><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/conditioning.md" target="_blank" rel="noopener">conditioning</a></li><li><span>文字經編碼器轉換後，透過交叉注意力注入 U-Net 的中間層。</span><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/conditioning.md" target="_blank" rel="noopener">conditioning</a></li><li><span>CFG：同一個模型學有條件與無條件預測，取樣時兩者組合。</span><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/guidance.md" target="_blank" rel="noopener">guidance</a></li><li><span>引導越強，多樣性越低、單張品質越高。</span><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/guidance.md" target="_blank" rel="noopener">guidance</a></li></ul>
+    <div class="formula">ε̃ = (1 + w) · ε_θ(z, c) − w · ε_θ(z)</div>
+    <p class="plain"><b>白話</b>有條件的猜測減掉沒條件的猜測，得到條件帶來的差異，再把它放大 w 倍。<a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/guidance.md" target="_blank" rel="noopener">guidance</a></p>
+    
+  </div>
+  <footer>出處（wiki 頁面）：<a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/conditioning.md" target="_blank" rel="noopener">conditioning</a><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/guidance.md" target="_blank" rel="noopener">guidance</a></footer>
+</section>
+<section class="slide" data-n="8">
+  <header><span class="kicker">08 / 08</span><h2>骨幹演進與總結</h2></header>
+  <div class="body has-vis">
+    <ul class="points"><li><span>DDPM 的去噪網路是 U-Net，主要由卷積的 ResNet 區塊組成。</span><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/denoising-backbone.md" target="_blank" rel="noopener">denoising-backbone</a></li><li><span>DiT 改用 Transformer，主張 U-Net 的歸納偏誤並非關鍵；LDM 則視為優點（說法不一）。</span><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/denoising-backbone.md" target="_blank" rel="noopener">denoising-backbone</a></li><li><span>回顧：加噪是固定的、網路學猜雜訊、生成時逐步去噪。</span><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/forward-process.md" target="_blank" rel="noopener">forward-process</a><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/noise-prediction.md" target="_blank" rel="noopener">noise-prediction</a><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/sampling-steps.md" target="_blank" rel="noopener">sampling-steps</a></li></ul>
+    
+    
+    <div class="vis-timeline"><div class="tl-item"><div class="tl-year">2020</div><div class="tl-dot"></div><div class="tl-name">DDPM</div></div><div class="tl-item"><div class="tl-year">2020</div><div class="tl-dot"></div><div class="tl-name">DDIM</div></div><div class="tl-item"><div class="tl-year">2022</div><div class="tl-dot"></div><div class="tl-name">LDM</div></div><div class="tl-item"><div class="tl-year">2022</div><div class="tl-dot"></div><div class="tl-name">CFG</div></div><div class="tl-item"><div class="tl-year">2023</div><div class="tl-dot"></div><div class="tl-name">DIT</div></div></div>
+  </div>
+  <footer>出處（wiki 頁面）：<a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/denoising-backbone.md" target="_blank" rel="noopener">denoising-backbone</a><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/forward-process.md" target="_blank" rel="noopener">forward-process</a><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/noise-prediction.md" target="_blank" rel="noopener">noise-prediction</a><a class="src" href="https://github.com/J-coder0126/diffusion-wiki/blob/main/wiki/concepts/sampling-steps.md" target="_blank" rel="noopener">sampling-steps</a></footer>
+</section>
+</main>
+<nav class="ctl"><button id="prev" aria-label="上一頁">←</button><span id="pos"></span><button id="next" aria-label="下一頁">→</button></nav>
+<script>
+const S=[...document.querySelectorAll('.slide')];let i=Math.max(0,Math.min(S.length-1,(parseInt(location.hash.slice(1))||1)-1));
+function show(n){i=Math.max(0,Math.min(S.length-1,n));S.forEach((s,k)=>s.classList.toggle('on',k===i));document.getElementById('pos').textContent=(i+1)+' / '+S.length;history.replaceState(null,'','#'+(i+1));}
+document.getElementById('prev').onclick=()=>show(i-1);document.getElementById('next').onclick=()=>show(i+1);
+addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' '].includes(e.key))show(i+1);if(['ArrowLeft','PageUp'].includes(e.key))show(i-1);});
+// 渲染檢查用：回傳每頁是否溢出
+window.checkOverflow=()=>S.map((s,k)=>{show(k);const b=s.querySelector('.body');return{slide:k+1,overflow:s.scrollHeight>s.clientHeight+1||b.scrollHeight>b.clientHeight+1}});
+addEventListener('hashchange',()=>show((parseInt(location.hash.slice(1))||1)-1));
+show(i);
+</script></body></html>

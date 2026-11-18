@@ -100,6 +100,7 @@ document.getElementById('prev').onclick=()=>show(i-1);document.getElementById('n
 addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' '].includes(e.key))show(i+1);if(['ArrowLeft','PageUp'].includes(e.key))show(i-1);});
 // 渲染檢查用：回傳每頁是否溢出
 window.checkOverflow=()=>S.map((s,k)=>{show(k);const b=s.querySelector('.body');return{slide:k+1,overflow:s.scrollHeight>s.clientHeight+1||b.scrollHeight>b.clientHeight+1}});
+addEventListener('hashchange',()=>show((parseInt(location.hash.slice(1))||1)-1));
 show(i);
 </script></body></html>
 `;

@@ -26,5 +26,13 @@ for (const d of drafts) {
     for (const n of numbersOf(item)) if (!joined.includes(n)) probs.push(`${tag}：數字 ${n} 在卡片 ${cs.join(",")} 中找不到 → ${body.slice(0, 30)}…`);
   }
 }
+// 前移的檢查（第 1 次執行後新增）：引用的卡片有「⚠ 說法不一」時提醒，避免把有爭議的說法寫成定論
+const warns = [];
+for (const d of drafts) {
+  const disputed = [...new Set([...d.bullets, ...d.plain].flatMap(cardsOf))].filter((c) => (cardText(c) || "").includes("⚠ 說法不一"));
+  const pageText = [...d.bullets, ...d.plain].join("");
+  if (disputed.length && !pageText.includes("說法不一")) warns.push(`drafts/${d.file}：引用的卡片 ${disputed.join(",")} 有「⚠ 說法不一」，確認本頁沒有把爭議寫成定論`);
+}
+if (warns.length) { console.log(`△ 提醒 ${warns.length} 頁（不擋關，需在 report 說明）`); warns.forEach((w) => console.log("  - " + w)); }
 if (probs.length) { console.log(`✗ 逐頁稿檢查：${probs.length} 個問題`); probs.forEach((p) => console.log("  - " + p)); process.exit(1); }
 console.log(`✓ 逐頁稿檢查通過：${drafts.length} 頁`);
