@@ -18,3 +18,7 @@
 ## 2026-11-18 ingest: CFG
 - 新增：papers/cfg、concepts/guidance、comparisons/classifier-guidance-vs-cfg
 - 更新：concepts/conditioning、timeline（標註 CFG 早在 2021 workshop 發表）、index
+
+## 2026-11-18 ingest: DiT
+- 新增：papers/dit、concepts/denoising-backbone、comparisons/unet-vs-dit
+- 更新：concepts/latent-diffusion、concepts/guidance（三種引導符號 ⚠）、concepts/conditioning、timeline、index

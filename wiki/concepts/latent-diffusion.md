@@ -1,6 +1,6 @@
 ---
 type: concept
-sources: [LDM]
+sources: [LDM, DiT]
 updated: 2026-11-18
 ---
 # 潛在擴散（Latent Diffusion）
@@ -23,8 +23,10 @@ $$
 
 ## 各論文的看法
 - **LDM（2022）**：提出兩階段潛在擴散，並以 KL 或 VQ 正規化穩定潛在空間。[LDM §3][LDM §3.1]
+- **DiT（2023）**：直接沿用 Stable Diffusion 的 VAE（下採樣 8 倍），256×256×3 的圖在 32×32×4 的潛在空間做擴散。[DiT §4]
 
 ## 相關頁面
 - [[ldm]]
 - [[forward-process]]
 - [[conditioning]]
+- [[dit]]

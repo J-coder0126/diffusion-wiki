@@ -1,6 +1,6 @@
 ---
 type: concept
-sources: [CFG, LDM]
+sources: [CFG, LDM, DiT]
 updated: 2026-11-18
 ---
 # 引導（Guidance）
@@ -23,9 +23,11 @@ $$
 ## 各論文的看法
 - **LDM（2022）**：文字生圖實驗使用無條件引導（引用 Ho & Salimans 的 workshop 版），引導尺度記為 s，例如 s = 10。[LDM Fig. 5][LDM §4.3.1]
 - **CFG（2022）**：系統性比較引導強度 w 與 p_uncond 的影響，並說明它和分類器引導的關係。[CFG §3.2][CFG §4]
-- ⚠ 說法不一：兩篇用不同符號表示引導強度——CFG 用 w（w = 0 為不引導）[CFG §3.2]，LDM 用 s。[LDM Fig. 5] 兩者的數值定義不一定相同，比較時要先確認公式。
+- **DiT（2023）**：最佳結果（FID 2.27）是搭配 CFG 取得，引導尺度記為 cfg = 1.50。[DiT §5.1][DiT Tab. 2]
+- ⚠ 說法不一：三篇用不同符號表示引導強度——CFG 用 w（w = 0 為不引導）[CFG §3.2]，LDM 用 s[LDM Fig. 5]，DiT 寫成 cfg = 1.50。[DiT Tab. 2] 數值定義不一定相同，比較前要先確認公式。
 
 ## 相關頁面
 - [[cfg]]
 - [[classifier-guidance-vs-cfg]]
 - [[conditioning]]
+- [[dit]]

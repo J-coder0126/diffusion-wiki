@@ -1,6 +1,6 @@
 ---
 type: concept
-sources: [LDM, CFG]
+sources: [LDM, CFG, DiT]
 updated: 2026-11-18
 ---
 # 條件生成（Conditioning）
@@ -18,6 +18,7 @@ updated: 2026-11-18
 ## 各論文的看法
 - **LDM（2022）**：以交叉注意力把文字、版面等條件接進 U-Net，做出 1.45B 參數的文字生圖模型。[LDM §3.3][LDM §4.3.1]
 - **CFG（2022）**：條件 c 只是多給網路一個輸入，訓練時隨機丟掉條件，就能同時得到無條件模型。[CFG §2][CFG §3.2]
+- **DiT（2023）**：比較四種注入方式，adaLN-Zero 優於交叉注意力與 in-context。[DiT §3.2][DiT §5]
 
 ## 相關頁面
 - [[ldm]]
