@@ -8,11 +8,14 @@
 ## 論文
 - [[ddpm]]：DDPM（2020），預測雜訊的擴散模型，首次達到高品質生成
 - [[ddim]]：DDIM（2020），沿用 DDPM 模型、以少步數確定性取樣加速 10–50 倍
+- [[ldm]]：LDM（2022），潛在空間擴散＋交叉注意力，Stable Diffusion 的基礎
 
 ## 概念
 - [[forward-process]]：前向過程，把圖片逐步加噪成純雜訊
 - [[noise-prediction]]：預測雜訊 ε 的訓練方式與 L_simple
 - [[sampling-steps]]：取樣步數與生成速度
+- [[latent-diffusion]]：在壓縮後的潛在空間做擴散
+- [[conditioning]]：條件生成與交叉注意力
 
 ## 比較
 - [[ddpm-vs-ddim]]：同一個模型，兩種取樣方式的差異

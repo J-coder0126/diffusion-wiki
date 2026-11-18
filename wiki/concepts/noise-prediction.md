@@ -1,6 +1,6 @@
 ---
 type: concept
-sources: [DDPM]
+sources: [DDPM, LDM]
 updated: 2026-11-18
 ---
 # 預測雜訊（Noise Prediction, ε-prediction）
@@ -23,7 +23,9 @@ $$
 
 ## 各論文的看法
 - **DDPM（2020）**：提出預測 ε ＋ L_simple，並指出它比預測平均值或 x₀ 更好。[DDPM §3.2][DDPM §4.2]
+- **LDM（2022）**：沿用同一個預測雜訊目標，只是把對象從像素 x 換成潛在表示 z。[LDM §3.2]
 
 ## 相關頁面
 - [[ddpm]]
 - [[forward-process]]
+- [[ldm]]

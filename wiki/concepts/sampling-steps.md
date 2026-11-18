@@ -1,6 +1,6 @@
 ---
 type: concept
-sources: [DDPM, DDIM]
+sources: [DDPM, DDIM, LDM]
 updated: 2026-11-18
 ---
 # 取樣步數（Sampling Steps）
@@ -18,6 +18,7 @@ updated: 2026-11-18
 ## 各論文的看法
 - **DDPM（2020）**：取樣步數等於訓練時的 T = 1000。[DDPM §4]
 - **DDIM（2020）**：20–100 步就能接近 1000 步的品質，加速 10–50 倍。[DDIM §5.1]
+- **LDM（2022）**：實驗中直接採用 DDIM 取樣器，例如 100 或 200 步。[LDM Fig. 6][LDM Fig. 5]
 - ⚠ 說法不一：在 DDPM 的設定下，生成過程是反向過程的近似，因此也要走完 T 步[DDPM §4][DDIM §4.2]；DDIM 則指出只要 q(x_t|x₀) 固定，就能用更短的生成過程。[DDIM §4.2]
 
 ## 相關頁面
