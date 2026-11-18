@@ -81,3 +81,12 @@ updated: 2026-11-18
 
 ## 9. 從 Wiki 產出成品
 教學 HTML 簡報依 `workflows/slides.md` 的 graph 執行，**只能使用 wiki/ 的內容**，產出放在 `output/<主題>/`。
+
+## 10. 簡報 workflow 指令速查
+```
+node scripts/check-coverage.js <slug>     # ② 覆蓋率關卡
+node scripts/make-cards.js <slug>         # ③ 證據卡（原文擷取）
+node scripts/check-drafts.js <slug> [NN]  # ⑥ 逐頁稿檢查
+node scripts/render.js <slug> "<標題>"     # ⑧ 渲染（不改字）
+node scripts/check-deck.js <slug>         # ⑨ 渲染檢查（瀏覽器另跑 checkOverflow()）
+```
