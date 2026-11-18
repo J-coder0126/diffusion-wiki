@@ -14,3 +14,7 @@
 ## 2026-11-18 ingest: LDM
 - 新增：papers/ldm、concepts/latent-diffusion、concepts/conditioning
 - 更新：concepts/noise-prediction、concepts/sampling-steps（加入 LDM 看法）、timeline、index
+
+## 2026-11-18 ingest: CFG
+- 新增：papers/cfg、concepts/guidance、comparisons/classifier-guidance-vs-cfg
+- 更新：concepts/conditioning、timeline（標註 CFG 早在 2021 workshop 發表）、index
