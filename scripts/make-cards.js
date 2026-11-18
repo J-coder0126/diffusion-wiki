@@ -11,7 +11,7 @@ for (const name of readSources(dir)) {
   const lines = fs.readFileSync(pages.get(name), "utf8").split(/\r?\n/);
   const title = (lines.find((l) => l.startsWith("# ")) || "# " + name).slice(2);
   let section = "", inMath = false, mathBuf = [];
-  const out = [`# 證據卡：${title}`, "", `> 來源頁面：wiki/${path.relative(path.join(__dirname, "..", "wiki"), pages.get(name)).replace(/\/g, "/")}（原文擷取，不改寫）`, ""];
+  const out = [`# 證據卡：${title}`, "", `> 來源頁面：wiki/${path.relative(path.join(__dirname, "..", "wiki"), pages.get(name)).split(path.sep).join("/")}（原文擷取，不改寫）`, ""];
   for (const raw of lines) {
     const l = raw.trim();
     if (l.startsWith("#")) { section = l.replace(/^#+\s*/, ""); continue; }
